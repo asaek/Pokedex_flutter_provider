@@ -10,9 +10,31 @@ class HomeProvider extends ChangeNotifier {
   });
 
   List<Pokemon>? pokemonList;
+  List<Pokemon>? searchList;
 
   Future<void> loadPokemons() async {
     pokemonList = await pokemonApi.getPokemons();
+    _setInitialList();
+    notifyListeners();
+  }
+
+  void _setInitialList() {
+    searchList = List<Pokemon>.from(pokemonList ?? []);
+  }
+
+  void searchPokemon(String filter) {
+    final filteLowerCase = filter.toLowerCase();
+    if (filter == '') {
+      _setInitialList();
+    } else {
+      searchList = List<Pokemon>.from(
+        pokemonList!.where(
+          (element) =>
+              element.name.toLowerCase().contains(filteLowerCase) ||
+              element.id.toLowerCase().contains(filteLowerCase),
+        ),
+      );
+    }
     notifyListeners();
   }
 }

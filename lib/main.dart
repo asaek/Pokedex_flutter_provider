@@ -16,12 +16,34 @@ class MyApp extends StatelessWidget {
         Provider<PokemonApi>(
           create: (context) => PokemonRestService(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+        ),
       ],
-      child: const MaterialApp(
-        title: 'Material App',
-        debugShowCheckedModeBanner: false,
-        home: SplashScreen(),
+      child: Consumer<ThemeProvider>(
+        builder: (BuildContext context, provider, _) {
+          final isLight = provider.isLight;
+          return MaterialApp(
+            title: 'Material App',
+            debugShowCheckedModeBanner: false,
+            theme: isLight ? ThemeData.light() : ThemeData.dark(),
+            home: const SplashScreen(),
+          );
+        },
+        child: const MaterialApp(
+          title: 'Material App',
+          debugShowCheckedModeBanner: false,
+          home: SplashScreen(),
+        ),
       ),
     );
+  }
+}
+
+class ThemeProvider extends ChangeNotifier {
+  bool isLight = true;
+  void changeTheme() {
+    isLight = !isLight;
+    notifyListeners();
   }
 }
